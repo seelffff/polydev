@@ -3,6 +3,7 @@ import {Wallet} from 'ethers';
 import dotenv from 'dotenv'; 
 import {Order, OrderSide, OrderOptions, OrderStatus} from '../types'
 import { CLOB_CONFIG } from '../config/constants';
+import {OrderPayload} from '../types'
 
 dotenv.config()
 
@@ -75,6 +76,27 @@ class Arms {
             orderType: 'limit' as const
             }
             return order
+        }
+ 
+        async cancelOrder(orderId: string): Promise<void> { 
+            if(!this.clobClient) { 
+                throw new Error('Ошибка инициализации клоб клиента')
+            }   
+            try {
+                const response = await this.clobClient.cancelOrder({orderID: orderId});
+
+                if(!response.canceled.includes(orderId)) { 
+                    const reason = response.not_canceled[orderId] || 'Неизвестная ошибка';
+                    throw new Error(`Ошибка отмены оредра: ${reason}`);
+
+                }
+
+            }catch(error) { 
+                if(error instanceof Error) { 
+                    throw new Error(`Ошибка при отмене ордера ${orderId}: ${error.message}`)
+                }
+                throw new Error(`Ошибка при отмене ордера ${orderId}: неизвестная ошибка`);
+            }
 
         }
         

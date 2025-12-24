@@ -104,3 +104,7 @@ export interface Position {
     negRisk?: boolean;
     orderType?: 'GTC' | 'FOK' | 'GTD'; 
   }
+
+  export interface OrderPayload { 
+    orderID: string
+  }

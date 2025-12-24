@@ -23,7 +23,7 @@ const orderSchema = new Schema({
     }, 
     orderType: { 
         type: String, 
-        enum: ['LIMIT', 'MARKET'],
+        enum: ['limit', 'market'],
         required: true, 
     },
     size: { type: Number, required: true },
