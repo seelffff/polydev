@@ -1,30 +1,28 @@
-import chalk from 'chalk'; 
-import inquirer from 'inquirer'
-import {Arms} from '../components/arms'; 
+import inquirer from 'inquirer';
+import { Eyes } from '../components/eyes';
+import * as logger from '../utils/logger';
 
-
-
-const printBanner = () => { 
-    console.clear()
-    console.log(chalk.magenta.underline(`
-                                                                                                                        
-    _/_/_/      _/_/    _/    _/      _/  _/      _/    _/_/      _/_/_/  _/    _/  _/_/_/  _/      _/  _/_/_/_/   
-   _/    _/  _/    _/  _/      _/  _/    _/_/  _/_/  _/    _/  _/        _/    _/    _/    _/_/    _/  _/          
-  _/_/_/    _/    _/  _/        _/      _/  _/  _/  _/_/_/_/  _/        _/_/_/_/    _/    _/  _/  _/  _/_/_/       
- _/        _/    _/  _/        _/      _/      _/  _/    _/  _/        _/    _/    _/    _/    _/_/  _/            
-_/          _/_/    _/_/_/_/  _/      _/      _/  _/    _/    _/_/_/  _/    _/  _/_/_/  _/      _/  _/_/_/_/       
-                                                                                                                                                                                                                                   
-        
-        `))
-    console.log('Algo and Copy trade machine');
+async function traderLookup() {
+  const eyes = new Eyes();
+  const { address } = await inquirer.prompt([{ type: 'input', name: 'address', message: 'Enter trader address:' }]);
+  
+  const t = await eyes.getTraderStats(address);
+  t ? logger.traderStats(t) : logger.error('Trader not found');
 }
 
-const printContacts = () => { 
-    console.log(chalk.magenta.underline('Twitter: https://x.com/seelffff'))
-    console.log(chalk.magenta.underline('GitHub: https://github.com/seelffff'))
-    console.log(chalk.magenta.underline('Sub pls ^_^'));
+export async function startCLI(): Promise<void> {
+  logger.banner();
+  logger.contacts();
+  logger.help();
+  
+  const { action } = await inquirer.prompt([{
+    type: 'list',
+    name: 'action',
+    message: 'Select action:',
+    choices: ['Trader Lookup', 'Exit']
+  }]);
+  
+  if (action === 'Trader Lookup') await traderLookup();
 }
 
-async function startCLI (): Promise<void> { 
-
-}
+startCLI();
